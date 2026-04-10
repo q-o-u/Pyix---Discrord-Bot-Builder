@@ -84,4 +84,10 @@ AGPL-3.0
 
 ---
 
+
+
+https://github.com/user-attachments/assets/b5006967-afe0-468c-bd58-a2fe0e26b096
+
+
+
 <p align="center">Built with ❤️ for the Discord community</p>
