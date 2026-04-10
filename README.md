@@ -1,3 +1,15 @@
+<p align="center">
+  <img src="renderer/icon.ico" width="80" />
+</p>
+
+<h1 align="center">Pyix</h1>
+<p align="center"><strong>Visual Discord Bot Builder — No Code Required</strong></p>
+
+<p align="center">
+  Build fully functional Discord bots with a drag-and-drop interface. Pick from 100+ command templates, wire up custom logic flows, and run your bot in one click.
+</p>
+
+---
 
 ## Features
 
