@@ -85,3 +85,13 @@ AGPL-3.0
 ---
 
 <p align="center">Built with ❤️ for the Discord community</p>
+
+
+
+
+https://github.com/user-attachments/assets/1cc9de58-ec78-4b68-872a-e92f0fb54648
+
+
+
+
+
