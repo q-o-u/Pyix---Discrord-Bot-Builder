@@ -622,16 +622,16 @@ async function autoLoadState() {
     }
     if (cfg.automod) {
       const am = cfg.automod;
-      if ($('#amAntiSpam')) $('#amAntiSpam').checked = am.antiSpam || false;
-      if ($('#amAntiLinks')) $('#amAntiLinks').checked = am.antiLinks || false;
-      if ($('#amAntiCaps')) $('#amAntiCaps').checked = am.antiCaps || false;
-      if ($('#amBadWords')) $('#amBadWords').checked = am.badWords || false;
-      if ($('#amMassMention')) $('#amMassMention').checked = am.massMention || false;
-      if ($('#amAntiInvites')) $('#amAntiInvites').checked = am.antiInvites || false;
-      if ($('#amAction')) $('#amAction').value = am.action || 'delete';
-      if ($('#amLogChannel')) $('#amLogChannel').value = am.logChannel || '';
-      if ($('#amExemptRole')) $('#amExemptRole').value = am.exemptRole || '';
-      if ($('#amBadWordsList')) $('#amBadWordsList').value = (am.badWordsList || []).join(', ');
+      if ($('#automodSpam')) $('#automodSpam').checked = am.antiSpam || false;
+      if ($('#automodLinks')) $('#automodLinks').checked = am.antiLinks || false;
+      if ($('#automodCaps')) $('#automodCaps').checked = am.antiCaps || false;
+      if ($('#automodWords')) $('#automodWords').checked = am.badWords || false;
+      if ($('#automodMassMention')) $('#automodMassMention').checked = am.massMention || false;
+      if ($('#automodInvites')) $('#automodInvites').checked = am.antiInvites || false;
+      if ($('#automodAction')) $('#automodAction').value = am.action || 'delete';
+      if ($('#automodLogChannel')) $('#automodLogChannel').value = am.logChannel || '';
+      if ($('#automodExemptRole')) $('#automodExemptRole').value = am.exemptRole || '';
+      if ($('#badWordsList')) $('#badWordsList').value = (am.badWordsList || []).join(', ');
     }
     selectedCommandId = null;
     editorPanel.classList.add('hidden');
@@ -3844,6 +3844,19 @@ async function loadConfig() {
       if ($('#logMemberLeave')) $('#logMemberLeave').checked = lc.memberLeave || false;
       if ($('#logChannelId')) $('#logChannelId').value = lc.logChannelId || '';
     }
+    if (cfg.automod) {
+      const am = cfg.automod;
+      if ($('#automodSpam')) $('#automodSpam').checked = am.antiSpam || false;
+      if ($('#automodLinks')) $('#automodLinks').checked = am.antiLinks || false;
+      if ($('#automodCaps')) $('#automodCaps').checked = am.antiCaps || false;
+      if ($('#automodWords')) $('#automodWords').checked = am.badWords || false;
+      if ($('#automodMassMention')) $('#automodMassMention').checked = am.massMention || false;
+      if ($('#automodInvites')) $('#automodInvites').checked = am.antiInvites || false;
+      if ($('#automodAction')) $('#automodAction').value = am.action || 'delete';
+      if ($('#automodLogChannel')) $('#automodLogChannel').value = am.logChannel || '';
+      if ($('#automodExemptRole')) $('#automodExemptRole').value = am.exemptRole || '';
+      if ($('#badWordsList')) $('#badWordsList').value = (am.badWordsList || []).join(', ');
+    }
     selectedCommandId = null;
     editorPanel.classList.add('hidden');
     renderCommands();
@@ -4006,8 +4019,8 @@ function bindEmbedBuilder() {
     updateEmbedPreview();
   });
 
-  const addCmdBtn = $('#addEmbedCmd');
-  if (addCmdBtn) addCmdBtn.addEventListener('click', addEmbedAsCommand);
+  const sendBtn = $('#sendEmbedWebhook');
+  if (sendBtn) sendBtn.addEventListener('click', sendEmbedViaWebhook);
 
   updateEmbedPreview();
 }
@@ -4069,36 +4082,49 @@ function updateEmbedPreview() {
     </div>`;
 }
 
-function addEmbedAsCommand() {
-  const cmdName = $('#embedCmdName')?.value?.trim();
-  if (!cmdName) { toast('Please enter a command name', 'error'); return; }
-  const template = TEMPLATES.find(t => t.id === 'embedcmd');
-  const cmd = {
-    uid: generateUID(),
-    templateId: 'embedcmd',
-    name: 'Custom Embed',
-    icon: template.icon,
-    description: template.description,
-    category: 'custom',
-    enabled: true,
-    fields: {
-      ...JSON.parse(JSON.stringify(template.fields)),
-      commandName: cmdName,
-      embedTitle: $('#embedTitle')?.value || '',
-      embedDesc: $('#embedDesc')?.value || '',
-      embedColor: $('#embedColor')?.value || '#ff7814',
-      embedThumb: $('#embedThumb')?.value || '',
-      embedImage: $('#embedImage')?.value || '',
-      embedFooter: $('#embedFooter')?.value || ''
-    }
-  };
-  commands.push(cmd);
-  renderCommands();
-  updateStats();
-  toast('Embed command added: ' + cmdName, 'success');
-  // Switch to commands page
-  navigateTo('commands');
-  selectCommand(cmd.uid);
+async function sendEmbedViaWebhook() {
+  const webhookUrl = $('#embedWebhookUrl')?.value?.trim();
+  if (!webhookUrl) { toast('Please enter a webhook URL', 'error'); return; }
+  if (!webhookUrl.startsWith('https://discord.com/api/webhooks/')) {
+    toast('Invalid webhook URL', 'error'); return;
+  }
+
+  const title = $('#embedTitle')?.value || '';
+  const desc = $('#embedDesc')?.value || '';
+  const color = $('#embedColor')?.value || '#ff7814';
+  const thumb = $('#embedThumb')?.value || '';
+  const image = $('#embedImage')?.value || '';
+  const footer = $('#embedFooter')?.value || '';
+
+  if (!title && !desc) { toast('Embed needs at least a title or description', 'error'); return; }
+
+  const embed = {};
+  if (title) embed.title = title;
+  if (desc) embed.description = desc;
+  embed.color = parseInt(color.replace('#', ''), 16);
+  if (thumb) embed.thumbnail = { url: thumb };
+  if (image) embed.image = { url: image };
+  if (footer) embed.footer = { text: footer };
+  if (embedFields.length) {
+    embed.fields = embedFields.filter(f => f.name || f.value).map(f => ({
+      name: f.name || '\u200b',
+      value: f.value || '\u200b',
+      inline: f.inline || false
+    }));
+  }
+
+  const btn = $('#sendEmbedWebhook');
+  if (btn) { btn.disabled = true; btn.textContent = 'Sending...'; }
+
+  const result = await window.pyix.sendWebhook(webhookUrl, { embeds: [embed] });
+
+  if (btn) { btn.disabled = false; btn.textContent = 'Send via Webhook'; }
+
+  if (result.success) {
+    toast('Embed sent successfully!', 'success');
+  } else {
+    toast('Failed: ' + (result.error || 'Unknown error'), 'error');
+  }
 }
 
 // ─── Code Preview ───

@@ -298,11 +298,11 @@
         <div class="page-scroll">
           <div class="page-header">
             <h2>Embed Builder</h2>
-            <p>Design a custom embed and add it as a command</p>
+            <p>Design a custom embed and send it via webhook</p>
           </div>
           <div class="embed-builder-split">
             <div class="embed-form">
-              <div class="input-group"><label>Command Name</label><div class="input-wrap"><input type="text" id="embedCmdName" placeholder="rules" /></div></div>
+              <div class="input-group"><label>Webhook URL</label><div class="input-wrap"><input type="text" id="embedWebhookUrl" placeholder="https://discord.com/api/webhooks/..." /></div></div>
               <div class="input-group"><label>Embed Title</label><div class="input-wrap"><input type="text" id="embedTitle" placeholder="Server Rules" /></div></div>
               <div class="input-group"><label>Description</label><textarea id="embedDesc" rows="4" placeholder="Write your embed content here..."></textarea></div>
               <div class="input-group"><label>Color</label><div class="color-pick-row"><input type="color" id="embedColor" value="#ff7814" /><input type="text" id="embedColorText" value="#ff7814" class="color-text-input" /></div></div>
@@ -313,7 +313,7 @@
                 <div class="embed-fields-header"><label>Fields</label><button class="btn btn-sm btn-secondary" id="addEmbedField">+ Add Field</button></div>
                 <div id="embedFieldsList"></div>
               </div>
-              <button class="btn btn-primary btn-glow" id="addEmbedCmd" style="margin-top:12px;">Add as Command</button>
+              <button class="btn btn-primary btn-glow" id="sendEmbedWebhook" style="margin-top:12px;">Send via Webhook</button>
             </div>
             <div class="embed-live-preview">
               <h3 class="preview-label">Live Preview</h3>
@@ -343,6 +343,7 @@
         <div class="page-scroll">
           <div class="page-header">
             <h2>Settings</h2>
+            <span class="pill-badge pill-green">🚀 This project has just started — more updates coming soon!</span>
             <p>Configure your bot's identity, presence, and preferences</p>
           </div>
           <div class="settings-grid">

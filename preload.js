@@ -12,5 +12,6 @@ contextBridge.exposeInMainWorld('pyix', {
   startBot: (code) => ipcRenderer.invoke('start-bot', code),
   stopBot: () => ipcRenderer.invoke('stop-bot'),
   onBotLog: (cb) => ipcRenderer.on('bot-log', (e, msg) => cb(msg)),
-  onBotStopped: (cb) => ipcRenderer.on('bot-stopped', (e, code) => cb(code))
+  onBotStopped: (cb) => ipcRenderer.on('bot-stopped', (e, code) => cb(code)),
+  sendWebhook: (url, payload) => ipcRenderer.invoke('send-webhook', url, payload)
 });

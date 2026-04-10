@@ -153,6 +153,32 @@ ipcMain.handle('stop-bot', async () => {
   return { success: true };
 });
 
+ipcMain.handle('send-webhook', async (event, url, payload) => {
+  try {
+    const { net } = require('electron');
+    return new Promise((resolve) => {
+      const request = net.request({ method: 'POST', url });
+      request.setHeader('Content-Type', 'application/json');
+      let body = '';
+      request.on('response', (response) => {
+        response.on('data', (chunk) => { body += chunk.toString(); });
+        response.on('end', () => {
+          if (response.statusCode >= 200 && response.statusCode < 300) {
+            resolve({ success: true });
+          } else {
+            resolve({ success: false, error: `HTTP ${response.statusCode}: ${body}` });
+          }
+        });
+      });
+      request.on('error', (err) => resolve({ success: false, error: err.message }));
+      request.write(JSON.stringify(payload));
+      request.end();
+    });
+  } catch (e) {
+    return { success: false, error: e.message };
+  }
+});
+
 app.on('before-quit', () => {
   if (botProcess) botProcess.kill('SIGKILL');
 });
