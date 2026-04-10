@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pyix — Bot Builder</title>
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <div class="ambient-glow glow-1"></div>
+  <div class="ambient-glow glow-2"></div>
+  <div class="ambient-glow glow-3"></div>
+
+  <!-- Custom title bar -->
+  <div id="titlebar">
+    <div class="titlebar-drag">
+      <div class="titlebar-logo">
+        <img src="./icon.ico" alt="Pyix" width="20" height="20" style="border-radius:4px;" />
+        <span>Pyix Bot Builder</span>
+      </div>
+    </div>
+    <div class="titlebar-controls">
+      <button class="tb-btn" id="tbMin" title="Minimize">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      </button>
+      <button class="tb-btn" id="tbMax" title="Maximize">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/></svg>
+      </button>
+      <button class="tb-btn tb-close" id="tbClose" title="Close">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <div id="app">
+    <!-- ─── Navigation Rail ─── -->
+    <nav id="navRail">
+      <div class="nav-top">
+        <div class="nav-brand">
+          <img src="./icon.ico" alt="Pyix" width="22" height="22" style="border-radius:4px;" />
+        </div>
+        <div class="nav-divider"></div>
+        <button class="nav-item active" data-page="dashboard" title="Dashboard">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+          <span class="nav-label">Home</span>
+        </button>
+        <button class="nav-item" data-page="commands" title="Commands">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
+          <span class="nav-label">Commands</span>
+        </button>
+        <button class="nav-item" data-page="automod" title="Auto-Mod">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          <span class="nav-label">Auto-Mod</span>
+        </button>
+        <button class="nav-item" data-page="embedbuilder" title="Embed Builder">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
+          <span class="nav-label">Embeds</span>
+        </button>
+        <button class="nav-item" data-page="codepreview" title="Code Preview">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+          <span class="nav-label">Code</span>
+        </button>
+        <button class="nav-item" data-page="settings" title="Settings">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          <span class="nav-label">Settings</span>
+        </button>
+      </div>
+      <div class="nav-bottom">
+        <button class="nav-item nav-run" id="runBotBtn" title="Start Bot">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+          <span class="nav-label">Run</span>
+        </button>
+        <button class="nav-item nav-export" id="exportBtn" title="Export Bot Code">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          <span class="nav-label">Export</span>
+        </button>
+      </div>
+    </nav>
+
+    <!-- ─── Main Content ─── -->
+    <main id="main">
+
+      <!-- ═══ PAGE: Dashboard ═══ -->
+      <div class="page active" id="pageDashboard">
+        <div class="page-scroll">
+          <div class="dash-hero">
+            <h1>Welcome to <span class="gradient-text">Pyix</span></h1>
+            <p>Build powerful Discord bots without writing a single line of code</p>
+          </div>
+
+          <div class="dash-stats">
+            <div class="stat-card-lg"><div class="stat-icon stat-icon-blue">📦</div><div class="stat-info"><span class="stat-value" id="totalCommands">0</span><span class="stat-label">Total Commands</span></div></div>
+            <div class="stat-card-lg"><div class="stat-icon stat-icon-green">✅</div><div class="stat-info"><span class="stat-value" id="activeCommands">0</span><span class="stat-label">Active</span></div></div>
+            <div class="stat-card-lg"><div class="stat-icon stat-icon-red">🛡️</div><div class="stat-info"><span class="stat-value" id="modCommands">0</span><span class="stat-label">Moderation</span></div></div>
+            <div class="stat-card-lg"><div class="stat-icon stat-icon-purple">🎮</div><div class="stat-info"><span class="stat-value" id="funCommands">0</span><span class="stat-label">Fun</span></div></div>
+            <div class="stat-card-lg"><div class="stat-icon stat-icon-cyan">🔧</div><div class="stat-info"><span class="stat-value" id="utilCommands">0</span><span class="stat-label">Utility</span></div></div>
+            <div class="stat-card-lg"><div class="stat-icon stat-icon-amber">📡</div><div class="stat-info"><span class="stat-value" id="eventCommands">0</span><span class="stat-label">Events</span></div></div>
+          </div>
+
+          <div class="dash-card dash-card-full">
+            <h3 class="dash-card-title">Command Distribution</h3>
+            <div id="cmdDistribution"><p style="color:var(--text-muted);font-size:13px;">Add commands to see distribution</p></div>
+          </div>
+
+          <div class="dash-grid">
+            <div class="dash-card">
+              <h3 class="dash-card-title">Quick Actions</h3>
+              <div class="action-cards">
+                <button class="action-card" id="dashExport">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                  <span>Export</span>
+                </button>
+                <button class="action-card" id="dashPreview">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+                  <span>Preview</span>
+                </button>
+                <button class="action-card" id="dashSave">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                  <span>Save</span>
+                </button>
+                <button class="action-card" id="dashLoad">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+                  <span>Load</span>
+                </button>
+              </div>
+            </div>
+            <div class="dash-card">
+              <h3 class="dash-card-title">Getting Started</h3>
+              <div class="gs-steps">
+                <div class="gs-step"><span class="gs-num">1</span><div><strong>Configure your bot</strong><p>Head to Settings to set your bot name, prefix, and token</p></div></div>
+                <div class="gs-step"><span class="gs-num">2</span><div><strong>Add commands</strong><p>Go to Commands to add templates like kick, ban, or fun commands</p></div></div>
+                <div class="gs-step"><span class="gs-num">3</span><div><strong>Set up auto-mod</strong><p>Enable anti-spam, bad word filters, and more in Auto-Mod</p></div></div>
+                <div class="gs-step"><span class="gs-num">4</span><div><strong>Export &amp; run</strong><p>Export your bot.js and run it with <code>node bot.js</code></p></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══ PAGE: Commands ═══ -->
+      <div class="page" id="pageCommands">
+        <div class="page-header">
+          <div class="page-header-left">
+            <h2>Command Workshop</h2>
+            <p>Build and customize your bot's commands</p>
+          </div>
+          <div class="page-header-right">
+            <div class="search-wrap">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              <input type="text" id="searchInput" placeholder="Search commands..." />
+            </div>
+          </div>
+        </div>
+
+        <div id="templateRibbon">
+          <button class="btn btn-primary btn-sm" id="openAddPanel">+ Add Command</button>
+        </div>
+
+        <div class="category-filter" id="categoryFilter">
+          <button class="cat-chip active" data-cat="all">All</button>
+          <button class="cat-chip" data-cat="moderation">Moderation</button>
+          <button class="cat-chip" data-cat="utility">Utility</button>
+          <button class="cat-chip" data-cat="fun">Fun</button>
+          <button class="cat-chip" data-cat="info">Info</button>
+          <button class="cat-chip" data-cat="events">Events</button>
+          <button class="cat-chip" data-cat="custom">Custom</button>
+        </div>
+
+        <div id="workspace">
+          <div id="commandList">
+            <div class="empty-state" id="emptyState">
+              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" opacity="0.3"><path d="M4 17l6-6-6-6"/><path d="M12 19h8"/></svg>
+              <h3>No Commands Yet</h3>
+              <p>Click "+ Add Command" to get started</p>
+            </div>
+            <div id="commandCards"></div>
+          </div>
+
+          <div id="editorPanel" class="hidden">
+            <div class="editor-header">
+              <h3 id="editorTitle">Edit Command</h3>
+              <div class="editor-header-actions">
+                <button class="icon-btn" id="duplicateCmd" title="Duplicate">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                </button>
+                <button class="icon-btn" id="closeEditor">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </button>
+              </div>
+            </div>
+            <div class="editor-tabs">
+              <button class="etab active" data-etab="settings">Settings</button>
+              <button class="etab" data-etab="logic">Logic</button>
+              <button class="etab" data-etab="preview">Preview</button>
+            </div>
+            <div class="editor-body" id="editorBody"></div>
+            <div class="editor-body hidden" id="editorLogic"></div>
+            <div class="editor-body hidden" id="editorPreview">
+              <div class="discord-preview" id="discordPreview"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══ PAGE: Auto-Mod ═══ -->
+      <div class="page" id="pageAutomod">
+        <div class="page-scroll">
+          <div class="page-header">
+            <h2>Auto-Moderation</h2>
+            <p>Configure automated moderation to keep your server safe</p>
+          </div>
+          <div class="automod-cards">
+            <div class="automod-card" data-feature="spam">
+              <div class="automod-card-icon">🛡️</div>
+              <div class="automod-card-info"><h4>Anti-Spam</h4><p>Detect and remove rapid message spam. Triggers when a user sends 5+ messages in 5 seconds.</p></div>
+              <label class="toggle-switch"><input type="checkbox" id="automodSpam" /><span class="toggle-slider"></span></label>
+            </div>
+            <div class="automod-card" data-feature="links">
+              <div class="automod-card-icon">🔗</div>
+              <div class="automod-card-info"><h4>Anti-Links</h4><p>Block messages containing URLs. Exempt roles can bypass.</p></div>
+              <label class="toggle-switch"><input type="checkbox" id="automodLinks" /><span class="toggle-slider"></span></label>
+            </div>
+            <div class="automod-card" data-feature="caps">
+              <div class="automod-card-icon">🔠</div>
+              <div class="automod-card-info"><h4>Anti-Caps</h4><p>Remove messages with excessive CAPS (over 70% uppercase, 10+ chars).</p></div>
+              <label class="toggle-switch"><input type="checkbox" id="automodCaps" /><span class="toggle-slider"></span></label>
+            </div>
+            <div class="automod-card" data-feature="words">
+              <div class="automod-card-icon">🚫</div>
+              <div class="automod-card-info"><h4>Bad Word Filter</h4><p>Filter messages containing blocked words or phrases.</p></div>
+              <label class="toggle-switch"><input type="checkbox" id="automodWords" /><span class="toggle-slider"></span></label>
+            </div>
+            <div class="automod-card" data-feature="massmention">
+              <div class="automod-card-icon">📢</div>
+              <div class="automod-card-info"><h4>Anti-Mass Mention</h4><p>Block messages mentioning more than 5 users at once.</p></div>
+              <label class="toggle-switch"><input type="checkbox" id="automodMassMention" /><span class="toggle-slider"></span></label>
+            </div>
+            <div class="automod-card" data-feature="invites">
+              <div class="automod-card-icon">📨</div>
+              <div class="automod-card-info"><h4>Anti-Invites</h4><p>Block Discord server invite links.</p></div>
+              <label class="toggle-switch"><input type="checkbox" id="automodInvites" /><span class="toggle-slider"></span></label>
+            </div>
+          </div>
+          <div class="automod-settings-panel">
+            <h3>Global Settings</h3>
+            <div class="automod-settings-grid">
+              <div class="input-group">
+                <label>Action on Violation</label>
+                <div class="select-wrap">
+                  <select id="automodAction">
+                    <option value="delete">Delete Message</option>
+                    <option value="warn">Warn + Delete</option>
+                    <option value="mute">Timeout 5min + Delete</option>
+                    <option value="kick">Kick + Delete</option>
+                  </select>
+                </div>
+              </div>
+              <div class="input-group">
+                <label>Log Channel ID</label>
+                <div class="input-wrap"><input type="text" id="automodLogChannel" placeholder="Channel ID" /></div>
+              </div>
+              <div class="input-group">
+                <label>Exempt Role ID</label>
+                <div class="input-wrap"><input type="text" id="automodExemptRole" placeholder="Role ID (bypasses automod)" /></div>
+              </div>
+              <div class="input-group">
+                <label>Blocked Words (comma-separated)</label>
+                <div class="input-wrap"><input type="text" id="badWordsList" placeholder="word1, word2, word3" /></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Auto-Responses Section -->
+          <div class="automod-section-divider"></div>
+          <div class="page-header" style="margin-top:8px;">
+            <div>
+              <h2>Auto-Responses</h2>
+              <p>Set trigger words/phrases that the bot automatically responds to</p>
+            </div>
+            <button class="btn btn-primary btn-sm" id="addAutoResponse">+ Add Response</button>
+          </div>
+          <div class="ar-container">
+            <div class="ar-header-row">
+              <span class="ar-col-label">Trigger</span>
+              <span class="ar-col-label">Response</span>
+              <span class="ar-col-label ar-col-sm">Exact</span>
+              <span class="ar-col-label ar-col-sm"></span>
+            </div>
+            <div id="autoResponsesList"></div>
+            <p class="ar-hint">Exact match = must be the entire message. Otherwise triggers on any message containing the word. Use <code>{author}</code> and <code>{server}</code> in responses.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══ PAGE: Embed Builder ═══ -->
+      <div class="page" id="pageEmbedbuilder">
+        <div class="page-scroll">
+          <div class="page-header">
+            <h2>Embed Builder</h2>
+            <p>Design a custom embed and add it as a command</p>
+          </div>
+          <div class="embed-builder-split">
+            <div class="embed-form">
+              <div class="input-group"><label>Command Name</label><div class="input-wrap"><input type="text" id="embedCmdName" placeholder="rules" /></div></div>
+              <div class="input-group"><label>Embed Title</label><div class="input-wrap"><input type="text" id="embedTitle" placeholder="Server Rules" /></div></div>
+              <div class="input-group"><label>Description</label><textarea id="embedDesc" rows="4" placeholder="Write your embed content here..."></textarea></div>
+              <div class="input-group"><label>Color</label><div class="color-pick-row"><input type="color" id="embedColor" value="#ff7814" /><input type="text" id="embedColorText" value="#ff7814" class="color-text-input" /></div></div>
+              <div class="input-group"><label>Thumbnail URL</label><div class="input-wrap"><input type="text" id="embedThumb" placeholder="https://..." /></div></div>
+              <div class="input-group"><label>Image URL</label><div class="input-wrap"><input type="text" id="embedImage" placeholder="https://..." /></div></div>
+              <div class="input-group"><label>Footer</label><div class="input-wrap"><input type="text" id="embedFooter" placeholder="Footer text" /></div></div>
+              <div class="embed-fields-section">
+                <div class="embed-fields-header"><label>Fields</label><button class="btn btn-sm btn-secondary" id="addEmbedField">+ Add Field</button></div>
+                <div id="embedFieldsList"></div>
+              </div>
+              <button class="btn btn-primary btn-glow" id="addEmbedCmd" style="margin-top:12px;">Add as Command</button>
+            </div>
+            <div class="embed-live-preview">
+              <h3 class="preview-label">Live Preview</h3>
+              <div class="discord-embed-preview" id="embedPreviewLive"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══ PAGE: Code Preview ═══ -->
+      <div class="page" id="pageCodepreview">
+        <div class="page-scroll">
+          <div class="page-header">
+            <h2>Code Preview</h2>
+            <p>See exactly what your exported bot.js will look like</p>
+            <div style="display:flex;gap:8px;margin-top:10px;">
+              <button class="btn btn-secondary btn-sm" id="refreshCodePreview">Refresh</button>
+              <button class="btn btn-primary btn-sm" id="copyCodePreview">Copy to Clipboard</button>
+            </div>
+          </div>
+          <pre class="code-block" id="codePreviewBlock"><code>Click "Refresh" to generate a preview...</code></pre>
+        </div>
+      </div>
+
+      <!-- ═══ PAGE: Settings ═══ -->
+      <div class="page" id="pageSettings">
+        <div class="page-scroll">
+          <div class="page-header">
+            <h2>Settings</h2>
+            <p>Configure your bot's identity, presence, and preferences</p>
+          </div>
+          <div class="settings-grid">
+
+            <!-- Bot Identity -->
+            <div class="settings-card">
+              <div class="settings-card-header">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                <h3>Bot Identity</h3>
+              </div>
+              <div class="settings-card-body">
+                <div class="input-group"><label>Bot Name</label><div class="input-wrap"><input type="text" id="botName" placeholder="My Awesome Bot" /></div></div>
+                <div class="input-group">
+                  <label>Command Type</label>
+                  <div class="select-wrap">
+                    <select id="commandType">
+                      <option value="prefix">Prefix Commands (!kick)</option>
+                      <option value="slash">Slash Commands (/kick)</option>
+                      <option value="both">Both (Prefix + Slash)</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="input-group" id="prefixGroup"><label>Command Prefix</label><div class="input-wrap short"><input type="text" id="botPrefix" placeholder="!" value="!" maxlength="5" /></div></div>
+                <div class="input-group">
+                  <label>Bot Token</label>
+                  <div class="input-wrap">
+                    <input type="password" id="botToken" placeholder="Paste token here..." />
+                    <button class="input-icon-btn" id="toggleToken" title="Show/Hide">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                    </button>
+                  </div>
+                  <span class="help-text">Your token is never stored or sent anywhere</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Presence -->
+            <div class="settings-card">
+              <div class="settings-card-header">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                <h3>Presence &amp; Status</h3>
+              </div>
+              <div class="settings-card-body">
+                <div class="input-group">
+                  <label>Online Status</label>
+                  <div class="select-wrap">
+                    <select id="botStatus">
+                      <option value="online">🟢 Online</option>
+                      <option value="idle">🟡 Idle</option>
+                      <option value="dnd">🔴 Do Not Disturb</option>
+                      <option value="invisible">⚫ Invisible</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="input-group">
+                  <label>Activity Type</label>
+                  <div class="select-wrap">
+                    <select id="botActivityType">
+                      <option value="0">Playing</option>
+                      <option value="1">Streaming</option>
+                      <option value="2">Listening to</option>
+                      <option value="3">Watching</option>
+                      <option value="5">Competing in</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="input-group"><label>Activity Text</label><div class="input-wrap"><input type="text" id="botActivity" placeholder="with commands..." /></div></div>
+              </div>
+            </div>
+
+            <!-- Data Management -->
+            <div class="settings-card">
+              <div class="settings-card-header">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+                <h3>Data &amp; Storage</h3>
+              </div>
+              <div class="settings-card-body">
+                <div class="settings-action-row">
+                  <div><h4>Save Configuration</h4><p>Export your current setup to a JSON file</p></div>
+                  <button class="btn btn-secondary btn-sm" id="saveConfigBtn">Save</button>
+                </div>
+                <div class="settings-action-row">
+                  <div><h4>Load Configuration</h4><p>Import a previously saved configuration</p></div>
+                  <button class="btn btn-secondary btn-sm" id="loadConfigBtn">Load</button>
+                </div>
+                <div class="settings-action-row danger">
+                  <div><h4>Clear All Commands</h4><p>Remove all commands and start fresh</p></div>
+                  <button class="btn btn-danger btn-sm" id="clearAllBtn">Clear All</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Logging -->
+            <div class="settings-card">
+              <div class="settings-card-header">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                <h3>Event Logging</h3>
+              </div>
+              <div class="settings-card-body">
+                <div class="input-group">
+                  <label>Log Channel ID</label>
+                  <div class="input-wrap"><input type="text" id="logChannelId" placeholder="Channel ID for event logs" /></div>
+                  <span class="help-text">All enabled log events will be sent here</span>
+                </div>
+                <div class="log-toggles">
+                  <label class="log-toggle-item">
+                    <input type="checkbox" id="logMsgDelete" />
+                    <span>Message Deletes</span>
+                  </label>
+                  <label class="log-toggle-item">
+                    <input type="checkbox" id="logMsgEdit" />
+                    <span>Message Edits</span>
+                  </label>
+                  <label class="log-toggle-item">
+                    <input type="checkbox" id="logMemberJoin" />
+                    <span>Member Joins</span>
+                  </label>
+                  <label class="log-toggle-item">
+                    <input type="checkbox" id="logMemberLeave" />
+                    <span>Member Leaves</span>
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <!-- About -->
+            <div class="settings-card">
+              <div class="settings-card-header">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                <h3>About</h3>
+              </div>
+              <div class="settings-card-body">
+                <div class="about-grid">
+                  <div class="about-row"><span class="about-label">Version</span><span class="about-value">3.0.0</span></div>
+                  <div class="about-row"><span class="about-label">Framework</span><span class="about-value">Electron + discord.js v14</span></div>
+                  <div class="about-row"><span class="about-label">Built by</span><span class="about-value">Pyix</span></div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- Add Command Picker -->
+  <div class="modal-overlay hidden" id="addCmdModal">
+    <div class="picker-panel">
+      <div class="picker-header">
+        <h3>Add Command</h3>
+        <button class="icon-btn" id="closeAddPanel">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <div class="picker-body">
+        <div class="picker-cats" id="pickerCats"></div>
+        <div class="picker-templates" id="pickerTemplates"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Code preview modal -->
+  <div class="modal-overlay hidden" id="codeModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Generated Bot Code</h3>
+        <button class="icon-btn" id="closeCodeModal">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <pre class="code-block modal-code" id="modalCodeBlock"><code></code></pre>
+      <div class="modal-actions">
+        <button class="btn btn-secondary" id="modalCopyCode">Copy</button>
+        <button class="btn btn-primary" id="modalExportCode">Export to File</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toastContainer"></div>
+  <script src="app.js"></script>
+</body>
+</html>
